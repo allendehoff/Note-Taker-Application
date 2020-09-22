@@ -18,7 +18,7 @@ app.use(express.static(__dirname + "/public"))
 // Notes (DATA)
 // =============================================================
 
-const notes = []
+// const notes = []
 
 // Routes
 // =============================================================
@@ -37,7 +37,7 @@ app.post("/api/notes", function(req, res){
     let newNote = req.body
     newNote.id = uniqid()
     // console.log(newNote)
-    return (fs.readFile((path.join(__dirname,"/db/db.json")), function (err, data){
+    fs.readFile((path.join(__dirname,"/db/db.json")), function (err, data){
         if (err) throw err;
         let notes = JSON.parse(data)
         notes.push(newNote)
@@ -46,7 +46,9 @@ app.post("/api/notes", function(req, res){
             console.log("Success!")
         })
         console.log(notes)
-    }))
+        return res.json(notes)
+    })
+
     // getAndRenderNotes()
     // renderActiveNote()
 })

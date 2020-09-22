@@ -15,11 +15,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(__dirname + "/public"))
 
-// Notes (DATA)
-// =============================================================
-
-// const notes = []
-
 // Routes
 // =============================================================
 
@@ -36,7 +31,6 @@ app.get("/api/notes", function(req, res){
 app.post("/api/notes", function(req, res){
     let newNote = req.body
     newNote.id = uniqid()
-    // console.log(newNote)
     fs.readFile((path.join(__dirname,"/db/db.json")), function (err, data){
         if (err) throw err;
         let notes = JSON.parse(data)
@@ -48,12 +42,22 @@ app.post("/api/notes", function(req, res){
         console.log(notes)
         return res.json(notes)
     })
-
-    // getAndRenderNotes()
-    // renderActiveNote()
 })
 
-app.get("/", function(req, res) {
+app.delete("/api/notes/:id", function(req, res){
+    fs.readFile((path.join(__dirname,"/db/db.json")), function (err, data){
+        if (err) throw err;
+        let notes = JSON.parse(data)
+        notesAfterDelete = notes.filter(note => note.id != req.params.id)
+        fs.writeFile((path.join(__dirname,"/db/db.json")), JSON.stringify(notesAfterDelete), (err) => {
+            if (err) throw err;
+            console.log("Success!")
+        })
+        return res.json(notesAfterDelete)
+    })
+})
+
+app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/index.html"));
 });
 
